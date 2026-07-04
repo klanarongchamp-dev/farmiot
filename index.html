@@ -3,118 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="apple-touch-icon" href="suanlungna_icon_180.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="สวนลุงนะ ฟาร์ม">
-<link rel="manifest" href="manifest.json">
-
-title>Smart Farm V9 PRO</title>
-<script src="https://unpkg.com/mqtt/dist/mqtt.min.js">
-setTimeout(()=>{
- const s=document.getElementById('splash');
- if(s){s.classList.add('fadeout');setTimeout(()=>s.remove(),700);}
-},2200);
-<title>Smart Farm V9 PRO</title>
+<title>SMART FARM V10 PRO</title>
 
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{
-margin:0;font-family:Arial;
-background:linear-gradient(135deg,#0f172a,#14532d);
-color:#fff;
-}
+body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
+.sidebar{width:220px;position:fixed;height:100%;background:#111827;padding:10px}
+.main{margin-left:230px;padding:10px}
 
-.header{
-text-align:center;
-padding:15px;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(15px);
-border-radius:20px;
-margin:10px;
-}
+.menu button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:10px;background:#1f2937;color:#fff}
+.card{background:#1f2937;padding:10px;margin:10px;border-radius:12px}
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-padding:10px;
-}
+.section{display:none}
+.active{display:block}
 
-.card{
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(15px);
-border-radius:20px;
-padding:15px;
-text-align:center;
-}
-
-button{
-width:100%;
-padding:15px;
-border:none;
-border-radius:15px;
-color:#fff;
-font-weight:bold;
-}
-
+button{cursor:pointer}
 .on{background:#22c55e}
 .off{background:#ef4444}
-
-.offline{color:#f87171}
-.online{color:#4ade80}
-
-canvas{
-background:rgba(255,255,255,0.05);
-border-radius:15px;
-padding:10px;
-}
 </style>
 </head>
 
 <body>
 
-<div id="splash">
-<img src="suanlungna_icon_180.png">
-<h1>🌱 สวนลุงนะ ฟาร์ม🌏</h1>
-<p style="color:white">อย่าทำเฒ่า ถ้าเท่าแต่แหลง</p>
+<div class="sidebar">
+<h3>🌱 FARM V10</h3>
+<div class="menu">
+<button onclick="show('dash')">🏠 Dashboard</button>
+<button onclick="show('pump')">💧 Pump</button>
+<button onclick="show('hist')">📈 History</button>
+<button onclick="show('user')">👥 Admin</button>
+<button onclick="show('set')">⚙️ Settings</button>
+<button onclick="show('log')">📋 Log</button>
+<button onclick="show('ota')">🔄 OTA</button>
+<button onclick="logout()">🚪 Logout</button>
+</div>
 </div>
 
-<div id="toast" class="toast"></div>
+<div class="main">
 
-
-<div class="header">
-<img src="suanlungna_icon_180.png" style="width:90px;height:90px;border-radius:20px;margin-bottom:10px;">
-<h1>🌱 สวนลุงนะ ฟาร์ม</h1>
-<p>Smart Farm Dashboard V7.5 Branding</p>
+<!-- DASHBOARD -->
+<div id="dash" class="section active card">
+<h2>Dashboard</h2>
+<p>Status: <span id="status">OFFLINE</span></p>
+<p>Temp: <span id="temp">--</span></p>
+<p>Hum: <span id="hum">--</span></p>
 </div>
 
-<div class="grid">
-
-<div class="card">
-<h3>🚰 Pump</h3>
-<p id="pump">--</p>
-<button class="on" onclick="pumpOn()">ON</button>
-<button class="off" onclick="pumpOff()">OFF</button>
+<!-- PUMP -->
+<div id="pump" class="section card">
+<h2>Pump Control</h2>
+<button class="on" onclick="pump('ON')">ON</button>
+<button class="off" onclick="pump('OFF')">OFF</button>
+<p id="pumpState">--</p>
 </div>
 
-<div class="card">
-<h3>📡 Sensor</h3>
-<p>🌡 <span id="temp">--</span> °C</p>
-<p>💧 <span id="hum">--</span> %</p>
-<p>🌧 <span id="rain">--</span></p>
-</div>
-
-</div>
-
-<div class="card">
-<h3>📊 Realtime Chart</h3>
+<!-- HISTORY -->
+<div id="hist" class="section card">
+<h2>History</h2>
 <canvas id="chart"></canvas>
 </div>
 
-<script src="app.js"></script>
+<!-- ADMIN -->
+<div id="user" class="section card">
+<h2>Admin</h2>
+<input id="u" placeholder="user"><br>
+<input id="p" type="password" placeholder="pass"><br>
+<button onclick="login()">Login</button>
+<p id="role">Guest</p>
+</div>
+
+<!-- SETTINGS -->
+<div id="set" class="section card">
+<h2>Settings</h2>
+<input id="limit" type="number" placeholder="Rain limit">
+<button onclick="save()">Save</button>
+</div>
+
+<!-- LOG -->
+<div id="log" class="section card">
+<h2>Log</h2>
+<div id="logs"></div>
+</div>
+
+<!-- OTA -->
+<div id="ota" class="section card">
+<h2>OTA Update</h2>
+<p>Firmware URL:</p>
+<input style="width:100%" placeholder="http://...firmware.bin">
+<button>Send OTA</button>
+</div>
+
+</div>
+
+<script>
+const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
+
+let logs=[];
+
+function show(id){
+document.querySelectorAll('.section').forEach(e=>e.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+function addLog(m){
+logs.unshift(m);
+if(logs.length>50) logs.pop();
+document.getElementById('logs').innerHTML = logs.join('<br>');
+}
+
+client.on("connect",()=>{
+document.getElementById("status").innerText="ONLINE";
+client.subscribe("farm/#");
+addLog("MQTT Connected");
+});
+
+client.on("message",(t,m)=>{
+const v=m.toString();
+
+if(t==="farm/temp") document.getElementById("temp").innerText=v;
+if(t==="farm/hum") document.getElementById("hum").innerText=v;
+if(t==="farm/pump/state") document.getElementById("pumpState").innerText=v;
+
+addLog(t+" : "+v);
+});
+
+function pump(v){
+client.publish("farm/pump/cmd",v);
+addLog("Pump "+v);
+}
+
+function login(){
+if(u.value=="admin"&&p.value=="1234"){
+document.getElementById("role").innerText="ADMIN";
+localStorage.setItem("role","admin");
+addLog("Login success");
+}
+}
+
+function save(){
+if(localStorage.getItem("role")!="admin") return;
+localStorage.setItem("limit",limit.value);
+addLog("Settings saved");
+}
+
+function logout(){
+localStorage.clear();
+location.reload();
+}
+
+// chart
+const ctx=document.getElementById("chart").getContext("2d");
+const chart=new Chart(ctx,{
+type:'line',
+data:{labels:[],datasets:[{label:'Temp',data:[]}]}
+});
+
+client.on("message",(t,m)=>{
+if(t==="farm/temp"){
+chart.data.labels.push("");
+chart.data.datasets[0].data.push(m.toString());
+if(chart.data.labels.length>20){
+chart.data.labels.shift();
+chart.data.datasets[0].data.shift();
+}
+chart.update();
+}
+});
+</script>
 
 </body>
 </html>
