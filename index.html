@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="apple-touch-icon" href="suanlungna_icon_180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="สวนลุงนะ ฟาร์ม">
+<link rel="manifest" href="manifest.json">
+
+title>Smart Farm V9 PRO</title>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js">
+setTimeout(()=>{
+ const s=document.getElementById('splash');
+ if(s){s.classList.add('fadeout');setTimeout(()=>s.remove(),700);}
+},2200);
 <title>Smart Farm V9 PRO</title>
 
 <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
@@ -64,9 +76,19 @@ padding:10px;
 
 <body>
 
+<div id="splash">
+<img src="suanlungna_icon_180.png">
+<h1>🌱 สวนลุงนะ ฟาร์ม🌏</h1>
+<p style="color:white">อย่าทำเฒ่า ถ้าเท่าแต่แหลง</p>
+</div>
+
+<div id="toast" class="toast"></div>
+
+
 <div class="header">
-<h2>🌱 Smart Farm V9 PRO</h2>
-<div id="status" class="offline">OFFLINE</div>
+<img src="suanlungna_icon_180.png" style="width:90px;height:90px;border-radius:20px;margin-bottom:10px;">
+<h1>🌱 สวนลุงนะ ฟาร์ม</h1>
+<p>Smart Farm Dashboard V7.5 Branding</p>
 </div>
 
 <div class="grid">
