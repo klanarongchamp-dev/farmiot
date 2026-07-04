@@ -1,6 +1,7 @@
 const broker = "wss://broker.hivemq.com:8884/mqtt";
 
-const client = mqtt.connect(broker);
+const client=mqtt.connect("wss://650188a0ee2b4367b7c131fb385590a9.s1.eu.hivemq.cloud:8884/mqtt",{username:"smartfarm",password:"Kla12345"});
+
 
 let offlineCache = JSON.parse(localStorage.getItem("cache") || "{}");
 
